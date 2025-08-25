@@ -628,8 +628,7 @@ function showAiAnalysis() {
                 behavior: 'smooth'
             });
             if (currentPage === 9) {
-                window.parent.postMessage('showContinueBtn', '*');
-    } 
+                window.parent.postMessage('showContinueBtn', '*'); } 
         }
     
         async function startWebcamAndContinue() {
@@ -689,7 +688,7 @@ function showAiAnalysis() {
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+}  //Diese Klammer fehlte
    
     
         function updateTimerDisplay(element, seconds) {
