@@ -627,8 +627,8 @@ function showAiAnalysis() {
                 top: 0,
                 behavior: 'smooth'
             });
-                if (currentPage === 9) {
-    window.parent.postMessage('showContinueBtn', '*');
+            if (currentPage === 9) {
+                window.parent.postMessage('showContinueBtn', '*');
     } 
         }
     
@@ -686,6 +686,11 @@ function showAiAnalysis() {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }, 1000);
+
+            // ✅ Button in SoSci anzeigen, falls wir jetzt auf Seite 9 sind
+            if (currentPage === 9) {
+                window.parent.postMessage('showContinueBtn', '*');
+            }
         }
     
         function updateTimerDisplay(element, seconds) {
