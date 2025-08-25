@@ -627,6 +627,9 @@ function showAiAnalysis() {
                 top: 0,
                 behavior: 'smooth'
             });
+            if (currentPage === 9) {
+    window.parent.postMessage('showContinueBtn', '*');
+    } 
         }
     
         async function startWebcamAndContinue() {
