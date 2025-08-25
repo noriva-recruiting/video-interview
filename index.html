@@ -602,35 +602,56 @@ function showAiAnalysis() {
             }, 3000);
         }
     
-        function nextPage() {
-            document.getElementById(`page${currentPage}`).classList.remove('active-page');
-            currentPage++;
-            document.getElementById(`page${currentPage}`).classList.add('active-page');
-            updateProgressBar();
-            updateStatusIndicatorVisibility();
-    
-            if (currentPage >= 5 && !aiAnalysisInterval) {
-                showAiAnalysis();
-            }
-    
-            if (currentPage === 5) {
-                startTimer('timer1', 60, 6);
-            } else if (currentPage === 6) {
-                startTimer('timer2', 60, 7);
-            } else if (currentPage === 7) {
-                startTimer('timer3', 60, 8);
-            } else if (currentPage === 8) {
-                startTimer('timer4', 60, 9);
-            }
-    
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-            if (currentPage === 9) {
+        function onPageChanged() {
+  updateProgressBar();
+  updateStatusIndicatorVisibility();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (currentPage === 9) {
     window.parent.postMessage('showContinueBtn', '*');
-    } 
-        }
+    try { window.top.postMessage('showContinueBtn', '*'); } catch(e) {}
+  }
+}
+
+function nextPage() {
+  document.getElementById(`page${currentPage}`).classList.remove('active-page');
+  currentPage++;
+  document.getElementById(`page${currentPage}`).classList.add('active-page');
+
+  if (currentPage >= 5 && !aiAnalysisInterval) {
+    showAiAnalysis();
+  }
+  if (currentPage === 5) startTimer('timer1', 60, 6);
+  else if (currentPage === 6) startTimer('timer2', 60, 7);
+  else if (currentPage === 7) startTimer('timer3', 60, 8);
+  else if (currentPage === 8) startTimer('timer4', 60, 9);
+
+  onPageChanged();
+}
+
+function startTimer(timerId, seconds, nextPageNumber) {
+  const timerElement = document.getElementById(timerId);
+  let remaining = seconds;
+  updateTimerDisplay(timerElement, remaining);
+
+  timers[timerId] = setInterval(() => {
+    remaining--;
+    updateTimerDisplay(timerElement, remaining);
+
+    if (remaining <= 0) {
+      clearInterval(timers[timerId]);
+      document.getElementById(`page${currentPage}`).classList.remove('active-page');
+      currentPage = nextPageNumber;
+      document.getElementById(`page${currentPage}`).classList.add('active-page');
+
+      if (currentPage === 6) startTimer('timer2', 60, 7);
+      else if (currentPage === 7) startTimer('timer3', 60, 8);
+      else if (currentPage === 8) startTimer('timer4', 60, 9);
+
+      onPageChanged();
+    }
+  }, 1000);
+}
+
     
         async function startWebcamAndContinue() {
             try {
@@ -655,36 +676,7 @@ function showAiAnalysis() {
             }
         }
     
-        function startTimer(timerId, seconds, nextPageNumber) {
-            const timerElement = document.getElementById(timerId);
-            let remaining = seconds;
-    
-            updateTimerDisplay(timerElement, remaining);
-    
-            timers[timerId] = setInterval(() => {
-                remaining--;
-                updateTimerDisplay(timerElement, remaining);
-    
-                if (remaining <= 0) {
-                    clearInterval(timers[timerId]);
-                    document.getElementById(`page${currentPage}`).classList.remove('active-page');
-                    currentPage = nextPageNumber;
-                    document.getElementById(`page${currentPage}`).classList.add('active-page');
-                    updateProgressBar();
-                    updateStatusIndicatorVisibility();
-    
-                    if (currentPage === 6) {
-                        startTimer('timer2', 60, 7);
-                    } else if (currentPage === 7) {
-                        startTimer('timer3', 60, 8);
-                    } else if (currentPage === 8) {
-                        startTimer('timer4', 60, 9);
-                    }
-    
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            }, 1000);
-        }
+
     
         function updateTimerDisplay(element, seconds) {
             const mins = Math.floor(seconds / 60);
