@@ -622,13 +622,14 @@ function showAiAnalysis() {
             } else if (currentPage === 8) {
                 startTimer('timer4', 60, 9);
             }
+            if (currentPage === 9) {
+                window.parent.postMessage('showContinueBtn', '*'); } 
     
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
-            if (currentPage === 9) {
-                window.parent.postMessage('showContinueBtn', '*'); } 
+            
         }
     
         async function startWebcamAndContinue() {
@@ -680,11 +681,6 @@ function showAiAnalysis() {
         startTimer('timer3', 60, 8);
     } else if (currentPage === 8) {
         startTimer('timer4', 60, 9);
-    }
-
-    // ✅ Zeige Button in SoSci, WENN wir wirklich jetzt auf Seite 9 angekommen sind
-    if (currentPage === 9) {
-        window.parent.postMessage('showContinueBtn', '*');
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
