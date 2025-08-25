@@ -657,35 +657,37 @@ function showAiAnalysis() {
   }
 }
 
-        function startTimer(timerId, seconds, nextPageNumber) {
-            const timerElement = document.getElementById(timerId);
-            let remaining = seconds;
-    
-            updateTimerDisplay(timerElement, remaining);
-    
-            timers[timerId] = setInterval(() => {
-                remaining--;
-                updateTimerDisplay(timerElement, remaining);
-    
-               if (remaining <= 0) {
-    clearInterval(timers[timerId]);
-    document.getElementById(`page${currentPage}`).classList.remove('active-page');
-    currentPage = nextPageNumber;
-    document.getElementById(`page${currentPage}`).classList.add('active-page');
-    updateProgressBar();
-    updateStatusIndicatorVisibility();
+       function startTimer(timerId, seconds, nextPageNumber) {
+    const timerElement = document.getElementById(timerId);
+    let remaining = seconds;
 
-    if (currentPage === 6) {
-        startTimer('timer2', 60, 7);
-    } else if (currentPage === 7) {
-        startTimer('timer3', 60, 8);
-    } else if (currentPage === 8) {
-        startTimer('timer4', 60, 9);
-    }
+    updateTimerDisplay(timerElement, remaining);
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}  //Diese Klammer fehlte
-   
+    timers[timerId] = setInterval(() => {
+        remaining--;
+        updateTimerDisplay(timerElement, remaining);
+
+        if (remaining <= 0) {
+            clearInterval(timers[timerId]);
+            document.getElementById(`page${currentPage}`).classList.remove('active-page');
+            currentPage = nextPageNumber;
+            document.getElementById(`page${currentPage}`).classList.add('active-page');
+            updateProgressBar();
+            updateStatusIndicatorVisibility();
+
+            if (currentPage === 6) {
+                startTimer('timer2', 60, 7);
+            } else if (currentPage === 7) {
+                startTimer('timer3', 60, 8);
+            } else if (currentPage === 8) {
+                startTimer('timer4', 60, 9);
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, 1000); // ❗️Nicht vergessen: Klammer für setInterval!
+
+} // ✅ ← Diese Klammer ist entscheidend! Schließt `startTimer()`
     
         function updateTimerDisplay(element, seconds) {
             const mins = Math.floor(seconds / 60);
