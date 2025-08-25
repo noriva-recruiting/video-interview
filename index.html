@@ -560,7 +560,7 @@ ol li::before {
     </div>
 
     <script>
-        let currentPage = 4;
+        let currentPage = 1;
         const totalPages = 9;
         let timers = {};
         let mediaStream = null;
@@ -622,72 +622,66 @@ function showAiAnalysis() {
             } else if (currentPage === 8) {
                 startTimer('timer4', 60, 9);
             }
-            if (currentPage === 9) {
-                window.parent.postMessage('showContinueBtn', '*'); } 
     
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
-            
         }
     
         async function startWebcamAndContinue() {
-  try {
-    mediaStream = await navigator.mediaDevices.getUserMedia({
-      video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
-      audio: true
-    });
-
-    // Streams auf spätere Video-Elemente legen (falls vorhanden)
-    for (let i = 1; i <= 4; i++) {
-      const v = document.getElementById(`webcam${i}`);
-      if (v) v.srcObject = mediaStream;
-      const e = document.getElementById(`webcamError${i}`);
-      if (e) e.textContent = '';
-    }
-  } catch (error) {
-    console.warn('Media permission denied or failed:', error);
-    // Hinweis auf Seite 4 anzeigen
-    const msg = document.getElementById('permError');
-    if (msg) msg.textContent = 'Camera/microphone permission was denied. You can still continue.';
-  } finally {
-    // In jedem Fall weiterschalten
-    nextPage();
-  }
-}
-
-       function startTimer(timerId, seconds, nextPageNumber) {
-    const timerElement = document.getElementById(timerId);
-    let remaining = seconds;
-
-    updateTimerDisplay(timerElement, remaining);
-
-    timers[timerId] = setInterval(() => {
-        remaining--;
-        updateTimerDisplay(timerElement, remaining);
-
-        if (remaining <= 0) {
-            clearInterval(timers[timerId]);
-            document.getElementById(`page${currentPage}`).classList.remove('active-page');
-            currentPage = nextPageNumber;
-            document.getElementById(`page${currentPage}`).classList.add('active-page');
-            updateProgressBar();
-            updateStatusIndicatorVisibility();
-
-            if (currentPage === 6) {
-                startTimer('timer2', 60, 7);
-            } else if (currentPage === 7) {
-                startTimer('timer3', 60, 8);
-            } else if (currentPage === 8) {
-                startTimer('timer4', 60, 9);
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }, 
+                    audio: true 
+                });
+    
+                for (let i = 1; i <= 4; i++) {
+                    const webcamVideo = document.getElementById(`webcam${i}`);
+                    webcamVideo.srcObject = mediaStream;
+                    document.getElementById(`webcamError${i}`).textContent = '';
+                }
+    
+                nextPage();
+            } catch (error) {
+                console.error('Error accessing media devices:', error);
+                for (let i = 1; i <= 4; i++) {
+                    document.getElementById(`webcamError${i}`).textContent = 
+                        'Camera/microphone access was denied. Please refresh and allow permissions.';
+                }
             }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    }, 1000); // ❗️Nicht vergessen: Klammer für setInterval!
-
-} // ✅ ← Diese Klammer ist entscheidend! Schließt `startTimer()`
+    
+        function startTimer(timerId, seconds, nextPageNumber) {
+            const timerElement = document.getElementById(timerId);
+            let remaining = seconds;
+    
+            updateTimerDisplay(timerElement, remaining);
+    
+            timers[timerId] = setInterval(() => {
+                remaining--;
+                updateTimerDisplay(timerElement, remaining);
+    
+                if (remaining <= 0) {
+                    clearInterval(timers[timerId]);
+                    document.getElementById(`page${currentPage}`).classList.remove('active-page');
+                    currentPage = nextPageNumber;
+                    document.getElementById(`page${currentPage}`).classList.add('active-page');
+                    updateProgressBar();
+                    updateStatusIndicatorVisibility();
+    
+                    if (currentPage === 6) {
+                        startTimer('timer2', 60, 7);
+                    } else if (currentPage === 7) {
+                        startTimer('timer3', 60, 8);
+                    } else if (currentPage === 8) {
+                        startTimer('timer4', 60, 9);
+                    }
+    
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }, 1000);
+        }
     
         function updateTimerDisplay(element, seconds) {
             const mins = Math.floor(seconds / 60);
